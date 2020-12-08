@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "module": "commonjs",
+    "jsx": "react",
+    "paths": {
+      "@hooks": ["hooks/index"],
+      "@utils": ["utils/index"],
+      "S": ["lib/S/index"],
+      "Former": ["lib/Former/index"],
+      "@variable": ["variable/index"],
+      "@page/*": ["page/*"],
+      "@component/*": ["component/*"],
+      "@UI/*": ["component/UI/*"],
+      "@context/*": ["context/*"],
+      "@data/*": ["data/*"]
+    }
+  }
+}

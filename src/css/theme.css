@@ -1,0 +1,39 @@
+body[data-theme='light'] {
+  /* body { */
+  --black: #111;
+  --primary: #ff385c;
+  --primary-dark: #e21a60;
+}
+
+:root {
+  --black: #000;
+  --black-1: #111;
+  --black-2: #222;
+  --black-3: #333;
+  --black-4: #444;
+  --black-5: #555;
+  --white: #fff;
+  --white-grey-0: #f8f8f8;
+  --white-grey-1: #f4f4f4;
+  --grey-0: #eee;
+  --grey-1: #ddd;
+  --grey-2: #ccc;
+  --grey-3: #bbb;
+  --grey-4: #aaa;
+  --grey-5: #999;
+  --grey-6: #888;
+  --grey-7: #777;
+  --grey-8: #666;
+  --primary: #ff385c;
+  --primary-dark: #e21a60;
+  --secondary: #008489;
+  --facebook: #4568b2;
+  --facebook-dark: #3b5998;
+}
+
+/* } */
+
+/* body[data-theme='dark'] {
+    --colors-primary: lightpink;
+    --colors-background: black;
+  } */
