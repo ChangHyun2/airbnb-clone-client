@@ -8,7 +8,7 @@ const prodConfig = {
   mode: 'production',
   output: {
     filename: '[name].bundle.js',
-    path: path.resolve(__dirname, 'dist/prod'),
+    path: path.resolve(__dirname, 'dist'),
   },
   devtool: 'source-map',
   module: {
@@ -50,7 +50,7 @@ const prodConfig = {
   },
   devServer: {
     port: 4000,
-    contentBase: path.resolve(__dirname, 'dist/prod'),
+    contentBase: path.resolve(__dirname, 'dist'),
     stats: 'errors-only',
   },
 };
