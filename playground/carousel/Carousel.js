@@ -1,9 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import styled from '@emotion/styled';
-import {
-  useCarouselContext,
-  CarouselContextProvider,
-} from './context/CarouselContext';
+import { CarouselContextProvider } from './context/CarouselContext';
 import Window from './Window';
 import Navigate from './Navigate';
 import Track from './Track';
@@ -22,6 +19,8 @@ const initialState = {
     width: 0,
     height: 0,
   },
+  isFirstSlide: true,
+  isLastSlide: false,
 };
 
 const reducer = (state, action) => {
@@ -29,8 +28,21 @@ const reducer = (state, action) => {
     case 'SET_TRACK_REF':
       return { ...state, trackRef: action.value };
     case 'CLICK_NAVIGATE_BTN': {
-      const { current, trackOffset, direction } = action.value;
-      return { ...state, current, trackOffset, direction };
+      const {
+        current,
+        trackOffset,
+        direction,
+        isFirstSlide,
+        isLastSlide,
+      } = action.value;
+      return {
+        ...state,
+        current,
+        trackOffset,
+        direction,
+        isFirstSlide,
+        isLastSlide,
+      };
     }
     case 'SET_SLIDES':
       return { ...state, slides: action.value };
@@ -41,15 +53,14 @@ const reducer = (state, action) => {
         windowSize,
         slideRelativePositions,
       };
-    case 'UPDATE_CURRENT_SLIDE': {
-      const { current, direction } = action.value;
-      return { ...state, current, direction };
-    }
+
+    default:
+      return;
   }
 };
 
 // utils
-const getWindowSize = (slides) => {
+const getMaxSlideSize = (slides) => {
   const windowSize = { width: 0, height: 0 };
 
   slides.forEach((slideNode) => {
@@ -77,14 +88,21 @@ const getSlideRelativePositions = (slides, slideGap, windowOverSize) => {
   return slideRelativePositions;
 };
 
-const Carousel = ({ config, children }) => {
-  const { showButton, slideGap = 0, windowOverSize = 0 } = config;
-  const windowWidth = 400;
-  const windowHeight = 400;
+const Carousel = (props) => {
+  const {
+    showButton,
+    slideGap = 0,
+    windowOverSize = 0,
+    showRightSlide = false,
+    showBothSlides = false,
+  } = props.config;
 
   const [state, dispatch] = React.useReducer(reducer, {
     ...initialState,
-    windowOverSize,
+    config: {
+      showRightSlide,
+      showBothSlides,
+    },
   });
 
   // update
@@ -94,8 +112,14 @@ const Carousel = ({ config, children }) => {
 
   useEffect(() => {
     if (state.slides.length > 0) {
-      const windowSize = getWindowSize(state.slides);
-      windowSize.width += windowOverSize * 2;
+      const windowSize = getMaxSlideSize(state.slides);
+
+      if (showRightSlide) {
+        windowSize.width += windowOverSize + slideGap;
+      }
+      if (showBothSlides) {
+        windowSize.width += (windowOverSize + slideGap) * 2;
+      }
 
       const slideRelativePositions = getSlideRelativePositions(
         state.slides,
@@ -119,7 +143,7 @@ const Carousel = ({ config, children }) => {
         },
       });
     }
-  }, [state.slides]);
+  }, [state.slides, slideGap, windowOverSize, showBothSlides, showRightSlide]);
 
   return (
     <CarouselContextProvider
@@ -128,11 +152,11 @@ const Carousel = ({ config, children }) => {
         dispatch,
       }}
     >
-      <CarouselWrapper>
+      <CarouselWrapper {...props}>
         <Window windowSize={state.windowSize}>
           {showButton ? <Navigate /> : null}
           <Track>
-            {React.Children.map(children, (child, index) => (
+            {React.Children.map(props.children, (child, index) => (
               <div className={`carousel-slide`}>{child}</div>
             ))}
           </Track>

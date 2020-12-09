@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { useCarouselContext } from './context/CarouselContext';
 
@@ -8,6 +8,9 @@ const Btn = styled.button`
   border-radius: 100%;
   border: none;
   background-color: white;
+  ${({ disabled }) => `
+    ${disabled ? 'visibility:hidden' : ''}
+  `}
 `;
 
 const NextWrapper = styled.div`
@@ -26,18 +29,35 @@ const PrevWrapper = styled.div`
 
 const NavigateBtn = ({ direction }) => {
   const { dispatch, state } = useCarouselContext();
+  const [disabled, setDisabled] = useState(false);
+
+  useEffect(() => {
+    console.log(state.isFirstSlide);
+    switch (direction) {
+      case 'prev':
+        setDisabled(state.isFirstSlide);
+        break;
+      case 'next':
+        setDisabled(state.isLastSlide);
+        break;
+      default:
+        setDisabled(false);
+        break;
+    }
+  }, [direction, state.isFirstSlide, state.isLastSlide]);
 
   const handleOnClick = (e) => {
-    const { slides, current: oldCurrent, trackOffset: oldTrackOffset } = state;
-    if (slides.length === 0) {
+    if (state.slides.length === 0) {
       return;
     }
 
-    const oldSlideWidth = slides[oldCurrent].offsetWidth;
     const navigateDirection = e.target.dataset.direction;
 
+    const oldCurrent = state.current;
     let newCurrent;
     let newTrackOffset;
+    let isFirstSlide;
+    let isLastSlide;
 
     if (navigateDirection === 'prev') {
       if (oldCurrent === 0) {
@@ -55,9 +75,23 @@ const NavigateBtn = ({ direction }) => {
       }
     }
 
+    isFirstSlide = newCurrent === 0 ? true : false;
+
     newTrackOffset = -state.slideRelativePositions[newCurrent];
-    if (newCurrent !== 0) {
-      newTrackOffset += 40;
+
+    if (0 < newCurrent && newCurrent < state.slides.length - 1) {
+      if (state.config.showBothSlides) {
+        newTrackOffset +=
+          (-state.slides[newCurrent].offsetWidth + state.windowSize.width) / 2;
+      }
+    }
+
+    if (newCurrent === state.slides.length - 1) {
+      isLastSlide = true;
+      newTrackOffset +=
+        -state.slides[newCurrent].offsetWidth + state.windowSize.width;
+    } else {
+      isLastSlide = false;
     }
 
     dispatch({
@@ -66,14 +100,22 @@ const NavigateBtn = ({ direction }) => {
         current: newCurrent,
         trackOffset: newTrackOffset,
         direction: navigateDirection,
+        isFirstSlide,
+        isLastSlide,
       },
     });
   };
 
-  return <Btn onClick={handleOnClick} data-direction={direction} />;
+  return (
+    <Btn
+      onClick={handleOnClick}
+      data-direction={direction}
+      disabled={disabled}
+    />
+  );
 };
 
-const Navigate = ({ onClick }) => {
+const Navigate = () => {
   return (
     <>
       <NextWrapper>

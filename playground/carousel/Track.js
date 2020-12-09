@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { useCarouselContext } from './context/CarouselContext';
 
@@ -21,7 +21,7 @@ const Track = ({ children, ...props }) => {
   };
   useEffect(() => {
     dispatch({ type: 'SET_TRACK_REF', value: trackRef });
-  }, [trackRef]);
+  }, [trackRef, dispatch]);
 
   useEffect(() => {
     if (children.length > 0 && !updatedSlides.current) {
@@ -31,7 +31,7 @@ const Track = ({ children, ...props }) => {
       });
       updatedSlides.current = true;
     }
-  }, [children]);
+  }, [children, dispatch]);
 
   return (
     <TrackWrapper
