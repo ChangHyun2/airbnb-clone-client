@@ -44,6 +44,12 @@ export const houseIcon = createIcon(path.house);
 export const adventureIcon = createIcon(path.adventure);
 export const helpIcon = createIcon(path.help);
 export const emailIcon = createIcon(path.email);
+export const profileCardIcon = createIcon(path.profileCard);
+export const tropyIcon = createIcon(path.trophy);
+export const giftBoxIcon = createIcon(path.giftBox);
+export const settingIcon = createIcon(path.setting);
+export const arrowLeftIcon = createIcon(path.arrowLeft);
+export const alertIcon = createIcon(path.alert);
 
 const Icons = {
   heart: heartIcon,
@@ -58,6 +64,12 @@ const Icons = {
   facebook: facebookIcon,
   house: houseIcon,
   email: emailIcon,
+  profileCard: profileCardIcon,
+  tropy: tropyIcon,
+  giftBox: giftBoxIcon,
+  setting: settingIcon,
+  arrowLeft: arrowLeftIcon,
+  alert: alertIcon,
 };
 
 export default Icons;

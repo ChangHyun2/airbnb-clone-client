@@ -1,18 +1,60 @@
 import React, { useEffect } from 'react';
-import { ThemeProvider } from '@emotion/react';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { AuthWithThirdParty } from '@store/actions/authActions';
+import { ThemeProvider } from '@emotion/react';
 import { pallete } from '@variable';
 import { MediaQueryContextProvider } from '@context/MediaQueryContext';
 import Layout from './page/Layout';
+import jwt_decode from 'jwt-decode';
+import { setCurrentUser } from '@store/actions/authActions';
+import store from '@store/index';
 
 function App() {
-  // useEffect(() => {}, []); check auth from storage token
+  useEffect(() => {
+    const jwtToken = localStorage.jwtToken;
+    console.log('app loaded');
+
+    if (jwtToken) {
+      const decoded = jwt_decode(jwtToken);
+      const currentTime = Date.now() / 1000;
+
+      console.log({ decoded });
+      console.log(jwtToken);
+      if (currentTime < decoded.exp) {
+        store.dispatch(setCurrentUser(decoded));
+      }
+    } else {
+      fetch('http://localhost:3000/api/auth/login', {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Credentials': true,
+        },
+      })
+        .then((res) => res.json())
+        .then((user) => {
+          console.log('hi');
+          console.log(user);
+          console.log('user', user);
+          console.log(user);
+
+          if (user) {
+            store.dispatch(setCurrentUser(user));
+          }
+        })
+        .catch((e) => {
+          console.log(e, 'error initial auth');
+        });
+    }
+  }, []);
 
   return (
     <ThemeProvider theme={pallete}>
       <MediaQueryContextProvider>
         <Router>
-          <Layout isAuth={false} />
+          <Layout />
         </Router>
       </MediaQueryContextProvider>
     </ThemeProvider>

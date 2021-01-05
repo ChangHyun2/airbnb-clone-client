@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 const style = ({ pd, size, color, center, bold }) =>
   css`
     ${pd ? `padding: ${pd};` : ''}
-    ${size ? `font-size: ${size};` : ''}
+    ${size ? `font-size: ${size}px;` : ''}
     ${color ? `color: ${color};` : ''}
     ${center ? `text-align: center;` : ''}
     ${bold ? 'font-weight: bold;' : ''}

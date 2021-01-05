@@ -2,11 +2,8 @@ import styled from '@emotion/styled';
 
 const Window = styled.div`
   position: relative;
+  width: 100%;
   border: 2px solid red;
-  ${({ windowSize }) => `
-      width: ${windowSize.width}px;
-      height:${windowSize.height}px;
-  `}
   overflow: hidden;
 `;
 

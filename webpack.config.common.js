@@ -1,10 +1,21 @@
 const path = require('path');
+const { DefinePlugin } = require('webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const htmlWebpackPlugin = require('html-webpack-plugin');
 const isDevMode = process.env.NODE_ENV !== 'production';
+const dotenv = require('dotenv').config({
+  path: path.resolve(__dirname, 'src/config/.env'),
+});
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
+  .BundleAnalyzerPlugin;
+
+if (dotenv.error) {
+  throw new Error('dotenv error');
+}
+console.log(dotenv.parsed);
 
 const commonConfig = {
-  entry: './src/index.js',
+  entry: ['@babel/polyfill', './src/index.js'],
   plugins: [
     new CleanWebpackPlugin({
       cleanOnceBeforeBuildPatterns: [path.resolve(__dirname, 'dist')],
@@ -12,14 +23,21 @@ const commonConfig = {
     new htmlWebpackPlugin({
       template: path.resolve(__dirname, 'public/index.html'),
     }),
+    new DefinePlugin({
+      'process.env': JSON.stringify(dotenv.parsed),
+    }),
+    new BundleAnalyzerPlugin(),
   ],
   resolve: {
     extensions: ['.js', '.jsx', '.css'],
     alias: {
+      '@': path.resolve(__dirname, 'src'),
       '@UI': path.resolve(__dirname, 'src/component/UI'),
       '@component': path.resolve(__dirname, 'src/component'),
       '@data': path.resolve(__dirname, 'src/data'),
       '@context': path.resolve(__dirname, 'src/context'),
+      '@store': path.resolve(__dirname, 'src/store'),
+      '@api': path.resolve(__dirname, 'src/api'),
       S: path.resolve(__dirname, 'src/lib/S/index.js'),
       Former: path.resolve(__dirname, 'src/lib/Former/index.js'),
       '@variable': path.resolve(__dirname, 'src/variable/index.js'),
@@ -42,7 +60,13 @@ const commonConfig = {
       },
       {
         test: /\.css$/,
-        use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
+        use: [
+          { loader: 'style-loader' },
+          {
+            loader: 'css-loader',
+            ident: '[name]__[local]___[hash:base64:5]',
+          },
+        ],
       },
       {
         test: /\.(jpe?g|gif|png|svg)$/i,

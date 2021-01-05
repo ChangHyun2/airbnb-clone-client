@@ -1,18 +1,22 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { CarouselContextProvider } from './context/CarouselContext';
 import Window from './Window';
 import Navigate from './Navigate';
 import Track from './Track';
+import Slide from './Slide';
 
 const CarouselWrapper = styled.div`
+  display: flex;
   position: relative;
+  width: 100%;
 `;
 
+// store
 const initialState = {
-  trackRef: null,
   trackOffset: 0,
   slides: [],
+  slidesRef: [],
   current: 0,
   direction: 'next',
   windowSize: {
@@ -21,12 +25,11 @@ const initialState = {
   },
   isFirstSlide: true,
   isLastSlide: false,
+  slideRelativePositions: [],
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case 'SET_TRACK_REF':
-      return { ...state, trackRef: action.value };
     case 'CLICK_NAVIGATE_BTN': {
       const {
         current,
@@ -35,6 +38,7 @@ const reducer = (state, action) => {
         isFirstSlide,
         isLastSlide,
       } = action.value;
+
       return {
         ...state,
         current,
@@ -44,106 +48,102 @@ const reducer = (state, action) => {
         isLastSlide,
       };
     }
-    case 'SET_SLIDES':
-      return { ...state, slides: action.value };
-    case 'SLIDES_LOADED':
-      const { windowSize, slideRelativePositions } = action.value;
+
+    case 'SET_SLIDES': {
+      const {
+        slides,
+        slideRelativePositions,
+        windowHeight,
+        isSetSlides,
+      } = action.value;
       return {
         ...state,
-        windowSize,
+        slides,
         slideRelativePositions,
+        windowHeight,
+        isSetSlides,
       };
+    }
+
+    case 'WINDOW-RESIZED': {
+      const { slides, slideRelativePositions, trackOffset } = action.value;
+      return {
+        ...state,
+        slides,
+        slideRelativePositions,
+        trackOffset,
+      };
+    }
 
     default:
-      return;
+      return state;
   }
 };
 
 // utils
-const getMaxSlideSize = (slides) => {
-  const windowSize = { width: 0, height: 0 };
 
-  slides.forEach((slideNode) => {
-    const { offsetWidth, offsetHeight } = slideNode;
-    if (windowSize.width < offsetWidth) {
-      windowSize.width = offsetWidth;
-    }
-    if (windowSize.height < offsetHeight) {
-      windowSize.height = offsetHeight;
-    }
-  });
-
-  return windowSize;
-};
-
-const getSlideRelativePositions = (slides, slideGap, windowOverSize) => {
-  const slideRelativePositions = [0];
-  let slideRelativePosition = 0;
-
-  slides.forEach((slideNode, index) => {
-    slideRelativePosition += slideNode.offsetWidth + slideGap;
-    slideRelativePositions.push(slideRelativePosition);
-  });
-
-  return slideRelativePositions;
-};
-
+// carousel
 const Carousel = (props) => {
-  const {
-    showButton,
-    slideGap = 0,
-    windowOverSize = 0,
-    showRightSlide = false,
-    showBothSlides = false,
-  } = props.config;
+  const { showButton, slideGap = 0, showBothSlides = false } = props.config;
+
+  const windowRef = useRef(null);
+  const trackRef = useRef(null);
 
   const [state, dispatch] = React.useReducer(reducer, {
     ...initialState,
     config: {
-      showRightSlide,
+      slideGap,
       showBothSlides,
     },
+    windowRef,
+    trackRef,
   });
 
-  // update
   useEffect(() => {
-    console.log('updated state', state);
-  }, [state]);
+    window.onresize = () => {
+      const slideRelativePositions = [0];
+      let slideRelativePosition = 0;
 
-  useEffect(() => {
-    if (state.slides.length > 0) {
-      const windowSize = getMaxSlideSize(state.slides);
+      const slides = state.trackRef.current.querySelectorAll('.carousel-slide');
 
-      if (showRightSlide) {
-        windowSize.width += windowOverSize + slideGap;
-      }
-      if (showBothSlides) {
-        windowSize.width += (windowOverSize + slideGap) * 2;
-      }
-
-      const slideRelativePositions = getSlideRelativePositions(
-        state.slides,
-        slideGap,
-        windowOverSize
-      );
-
-      state.slides.forEach((slideNode, index) => {
-        slideNode.style.position = 'absolute';
-        slideNode.style.left = `${slideRelativePositions[index]}px`;
-        if (index === slideNode.length - 1) {
-          slideNode.style.left = `${state.slides[index]}`;
-        }
+      slides.forEach((slide) => {
+        slideRelativePosition +=
+          slide.firstElementChild.width + state.config.slideGap;
+        slideRelativePositions.push(slideRelativePosition);
       });
 
+      let newTrackOffset;
+
+      newTrackOffset = -slideRelativePositions[state.current];
+
+      if (0 < state.current && state.current < slides.length - 1) {
+        if (state.config.showBothSlides) {
+          newTrackOffset +=
+            (state.windowRef.current.offsetWidth -
+              slides[state.current].firstElementChild.width) /
+            2;
+        }
+      }
+
+      if (state.current === slides.length - 1) {
+        newTrackOffset +=
+          -slides[state.current].firstElementChild.width +
+          state.windowRef.current.offsetWidth;
+      }
+
       dispatch({
-        type: 'SLIDES_LOADED',
+        type: 'WINDOW-RESIZED',
         value: {
-          windowSize,
+          slides,
           slideRelativePositions,
         },
       });
-    }
-  }, [state.slides, slideGap, windowOverSize, showBothSlides, showRightSlide]);
+    };
+  }, [state.isSetSlides]);
+
+  useEffect(() => {
+    console.log('updated');
+  }, [state.slideRelativePositions]);
 
   return (
     <CarouselContextProvider
@@ -153,13 +153,13 @@ const Carousel = (props) => {
       }}
     >
       <CarouselWrapper {...props}>
-        <Window windowSize={state.windowSize}>
+        <Window ref={windowRef} style={{ height: state.windowHeight }}>
           {showButton ? <Navigate /> : null}
-          <Track>
-            {React.Children.map(props.children, (child, index) => (
-              <div className={`carousel-slide`}>{child}</div>
-            ))}
-          </Track>
+          <Track
+            ref={trackRef}
+            carouselChildren={props.children}
+            slideRelativePositions={state.slideRelativePositions}
+          />
         </Window>
       </CarouselWrapper>
     </CarouselContextProvider>

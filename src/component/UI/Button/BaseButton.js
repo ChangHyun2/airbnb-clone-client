@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { TripleDotLoading } from '@UI/Loading';
 
 const BaseButton = styled.button`
   display: inline-block;
@@ -32,7 +33,15 @@ const BaseLinkButton = styled.a`
 `;
 
 const Button = React.forwardRef(function button(
-  { onClick, disabled = false, children, href, ...others },
+  {
+    onClick,
+    disabled = false,
+    children,
+    href,
+    isSubmitting,
+    LoadingComponent = TripleDotLoading,
+    ...others
+  },
   ref
 ) {
   return href ? (
@@ -40,14 +49,19 @@ const Button = React.forwardRef(function button(
       ref={ref}
       href={href}
       onClick={onClick}
-      disabled={disabled}
+      disabled={disabled || isSubmitting}
       {...others}
     >
-      {children}
+      {isSubmitting ? <LoadingComponent /> : children}
     </BaseLinkButton>
   ) : (
-    <BaseButton ref={ref} onClick={onClick} disabled={disabled} {...others}>
-      {children}
+    <BaseButton
+      ref={ref}
+      onClick={onClick}
+      disabled={disabled || isSubmitting}
+      {...others}
+    >
+      {isSubmitting ? <LoadingComponent /> : children}
     </BaseButton>
   );
 });

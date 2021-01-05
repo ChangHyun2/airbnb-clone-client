@@ -1,18 +1,13 @@
 import React from 'react';
-import styled from '@emotion/styled';
-import Header from './Header';
+import Show from '@component/Show';
+import MobilewishLists from './MobilewishLists';
 
-const Wrapper = styled.div`
-  padding: 12px 23px;
-`;
-
-function wishLists() {
+function WishLists() {
   return (
-    <Wrapper>
-      <Header />
-      {/* <WishCards /> */}
-    </Wrapper>
+    <Show.onlySm>
+      <MobilewishLists />
+    </Show.onlySm>
   );
 }
 
-export default wishLists;
+export default WishLists;

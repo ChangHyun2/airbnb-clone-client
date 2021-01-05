@@ -6,7 +6,8 @@ import React, {
   useReducer,
 } from 'react';
 
-import { FormContextProvider } from '@context/FormContext';
+import { FormContextProvider } from './FormContext';
+
 import formReducer from './formReducer';
 
 const useEventCallback = (fn) => {
@@ -24,23 +25,23 @@ function Former(props) {
 
   if (!onSubmit) {
     throw new Error(
-      'you must set onSubmit handler function to formGen component'
+      'you must set onSubmit handler function to Former component props'
     );
   }
 
   const initialState = {
     values: initialValues,
+    validationSchema,
+    isSubmitting: false,
     touched: {},
     errors: {},
     focused: {},
-    isSubmitting: false,
-    validationSchema,
   };
 
   const [state, dispatch] = useReducer(formReducer, initialState);
 
   useEffect(() => {
-    console.log('error', state.errors);
+    console.log('state changed', state);
   }, [state]);
 
   const setFieldError = useCallback((field, error) => {
@@ -69,6 +70,9 @@ function Former(props) {
     const validate = validationSchema[field];
 
     if (validate === undefined) {
+      console.error(
+        `cannot call ${field} field validate function, ${field} validate function is undefined`
+      );
       return;
     }
 
@@ -127,7 +131,7 @@ function Former(props) {
     });
   });
 
-  const submitForm = (e) => {
+  const submitForm = async (e) => {
     e.preventDefault();
 
     submitInit();
@@ -137,14 +141,14 @@ function Former(props) {
     const isValid = Object.keys(errors).length === 0;
     if (!isValid) {
       submitFailure();
-      return console.error(errors);
+      return console.error({ errors, message: 'values are not valid' });
     }
 
     try {
-      onSubmit(state.values);
+      await onSubmit(state.values);
       submitSuccess();
     } catch (e) {
-      console.error(e);
+      console.error({ e, message: 'onSubmit error' });
       submitFailure();
     }
   };
@@ -162,10 +166,14 @@ function Former(props) {
   });
 
   const handleBlur = useEventCallback((e) => {
+    console.log('handleOnBlur');
     const { name, value } = e.target;
 
+    if (state.touched[name] === false) {
+      setFieldTouched(name, true);
+    }
+
     setFieldFocused(name, false);
-    state.values[name].length > 0 && setFieldTouched(name, true);
 
     const validate = state.validationSchema[name];
     if (!validate) {
@@ -182,8 +190,9 @@ function Former(props) {
   });
 
   const handleChange = useEventCallback((e) => {
+    console.log('handleChange');
     const { name, value } = e.target;
-    console.log(state.errors, 'handleChange');
+
     const error = state.errors[name];
     const hasError = error && Object.keys(error).length > 0;
     if (hasError) {

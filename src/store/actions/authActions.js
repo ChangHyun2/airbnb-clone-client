@@ -1,10 +1,10 @@
-import axios from 'axios';
+import axios from '@/axios';
 import { setAuthToken } from '@utils';
 import jwt_decode from 'jwt-decode';
 
-import { GET_ERRORS, SET_CURRENT_USER, USER_LOADING } from './types';
+import { GET_ERRORS, SET_CURRENT_USER, USER_LOADING } from './authActionTypes';
 
-export const registerUser = (userData, history) => (dispatch) => {
+export const RegisterWithEmail = (userData, history) => (dispatch) => {
   axios
     .post('/api/users/register', userData)
     .then((res) => history.push('/login'))
@@ -16,11 +16,12 @@ export const registerUser = (userData, history) => (dispatch) => {
     );
 };
 
-export const loginUser = (userData) => (dispatch) => {
+export const authWithEmail = (userData) => (dispatch) => {
   axios
     .post('/api/users/login', userData)
     .then((res) => {
       const { token } = res.data;
+      console.log(res.data);
 
       localStorage.setItem('jwtToken', token);
       setAuthToken(token);
@@ -28,17 +29,23 @@ export const loginUser = (userData) => (dispatch) => {
       const decoded = jwt_decode(token);
       dispatch(setCurrentUser(decoded));
     })
-    .catch((err) =>
+    .catch((err) => {
+      console.log(err);
       dispatch({
         type: GET_ERRORS,
         payload: err.response.data,
-      })
-    );
+      });
+    });
 };
 
-export const setCurrentUser = (decoded) => ({
+export const AuthWithThirdParty = (userData) => {
+  console.log(userData);
+  dispatch(setCurrentUser(userData));
+};
+
+export const setCurrentUser = (user) => ({
   type: SET_CURRENT_USER,
-  payload: decoded,
+  payload: user,
 });
 
 export const setUserLoading = () => ({
@@ -50,5 +57,5 @@ export const logoutUser = () => (dispatch) => {
 
   setAuthToken(false);
 
-  dispatch(setCurrentUser({}));
+  dispatch(setCurrentUser(null));
 };

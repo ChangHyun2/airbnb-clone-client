@@ -11,28 +11,28 @@ const navItems = [
     logo: 'heart',
   },
   {
-    to: '/login',
+    to: '/signin',
     text: '로그인',
-    isAuth: false,
     logo: 'login',
+    isAuth: false,
   },
   {
     to: '/trips',
     text: '여행',
-    isAuth: true,
     logo: 'airbnb',
+    isAuth: true,
   },
   {
-    to: '/inbox',
+    to: '/message',
     text: '메시지',
-    isAuth: true,
     logo: 'message',
+    isAuth: true,
   },
   {
-    to: '/account-setting',
+    to: '/profile',
     text: '프로필',
-    isAuth: true,
     logo: 'profile',
+    isAuth: true,
   },
 ];
 

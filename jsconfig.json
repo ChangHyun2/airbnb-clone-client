@@ -13,7 +13,10 @@
       "@component/*": ["component/*"],
       "@UI/*": ["component/UI/*"],
       "@context/*": ["context/*"],
-      "@data/*": ["data/*"]
+      "@data/*": ["data/*"],
+      "@store/*": ["store/*"],
+      "@api/*": ["api/*"],
+      "@/*": ["/*"]
     }
   }
 }

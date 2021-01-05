@@ -5,7 +5,7 @@ import { center } from 'S';
 const RoundButton = styled(BaseButton)`
   ${center}
   background: none;
-  border: none;
+  border: 2px solid transparent;
   border-radius: 100%;
   padding: 1em;
   ${({ children }) => {
@@ -16,9 +16,12 @@ const RoundButton = styled(BaseButton)`
       height:${length}em;
     `;
   }}
-  ${({ theme: { whiteGrey1 } }) => `
+  ${({ theme: { whiteGrey1, black } }) => `
   &:hover {
     background-color: ${whiteGrey1}
+  }
+  &:focus{
+    border: 2px solid ${black}
   }
 `}
 `;

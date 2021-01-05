@@ -5,6 +5,8 @@ import { center } from 'S';
 const DividerWithChildren = styled.div`
   width: 100%;
   ${center}
+  margin-bottom: 15px;
+
   & > * {
     position: relative;
   }
@@ -27,10 +29,11 @@ const DividerWithChildren = styled.div`
     top: 50%;
   }
 
-  ${({ theme: { grey1, grey7 } }) => `
+  ${({ theme: { grey0, grey7, whiteGrey0 } }) => `
     & > *::before,
     & > *::after {
-      border-bottom: 1px solid ${grey1}
+      border-bottom: 1px solid ${grey0}
+      box-shadow: 0px 0px 0px 0.5px ${whiteGrey0}
     }
     & > * {
       color: ${grey7} 
@@ -42,15 +45,16 @@ const SingleDivider = styled.div`
   ${center}
   position: relative;
   width: 100%;
-  height: 50px;
+  margin-bottom: 25px;
 
   & > div {
     position: absolute;
     top: 0;
     width: 100%;
     height: 50%;
-    ${({ theme: { grey1 } }) => `
-      border-bottom: 1px solid ${grey1};
+    ${({ theme: { grey0, whiteGrey0 } }) => `
+      border-bottom: 1px solid ${grey0}
+      box-shadow: 0px 0px 0px 0.5px ${whiteGrey0}
     `}
   }
 `;
@@ -59,15 +63,15 @@ const OverFlowHidden = styled.div`
   overflow: hidden;
 `;
 
-const Divider = ({ children }) =>
+const Divider = ({ children, ...otherProps }) =>
   children ? (
-    <OverFlowHidden>
+    <OverFlowHidden {...otherProps}>
       <DividerWithChildren>
         <div>{children}</div>
       </DividerWithChildren>
     </OverFlowHidden>
   ) : (
-    <SingleDivider>
+    <SingleDivider {...otherProps}>
       <div></div>
     </SingleDivider>
   );

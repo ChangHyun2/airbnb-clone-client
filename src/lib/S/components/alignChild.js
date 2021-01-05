@@ -19,8 +19,8 @@ export const RowSpaceBetween = styled.div`
 
 export const Col = styled.div`
   display: flex;
-  align-items: center;
   flex-direction: column;
+  justify-content: center;
 `;
 
 export const ColCenter = styled.div`

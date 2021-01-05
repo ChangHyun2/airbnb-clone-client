@@ -17,8 +17,8 @@ export const spaceBetween = `
 
 export const col = `
     display:flex;
-    align-items:center;
     flex-direction:column;
+    justify-content:center;
 `;
 
 export const colCenter = `

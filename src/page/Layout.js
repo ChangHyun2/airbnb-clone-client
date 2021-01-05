@@ -1,19 +1,37 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
-
+import { Route, Switch, Redirect } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import Home from './home/home';
-import LoginPages from './loginPages/loginPages';
-import WishLists from './wishLists/wishLists';
+import { useHistory } from 'react-router-dom';
+import Login from './login/login';
+import WishLists from './wishLists/MobilewishLists';
+import Profile from './profile/profile';
 
 import Show from '@component/Show';
 import FootNavMenu from '@component/smOnly/FootNavMenu/footNavMenu';
-import { AuthContextProvider } from '@context/AuthContext';
-console.log('hi');
 
-function Layout({ isAuth }) {
+const GoogleSuccess = () => {
+  React.useEffect(() => {
+    const params = window.location.search;
+    if (window.opener) {
+      // send them to the opening window
+      window.opener.postMessage(params);
+      // close the popup
+      window.close();
+    }
+  });
+  return <h2>waitsdfsdfsdfsdfsdfsdfsdfsfsdfsdfsing...</h2>;
+};
+
+function Layout() {
+  const isAuth = useSelector((state) => state.auth.isAuth);
+
   return (
-    <AuthContextProvider value={isAuth}>
+    <>
       <Switch>
+        <Route path="/google/success">
+          <GoogleSuccess />
+        </Route>
         <Route path="/" exact>
           <Home />
         </Route>
@@ -23,19 +41,18 @@ function Layout({ isAuth }) {
         {/* <Route path="/trips">
           <Trips />
         </Route>
-        <Route path="/inbox">
-          <Inbox />
+        <Route path="/message">
+          <Message />
+        </Route> */}
+        <Route path="/profile">
+          {isAuth ? <Profile /> : <Redirect to="/" />}
         </Route>
-        <Route path="/account-setting">
-          <AccountSetting />
-        </Route>
-        */}
       </Switch>
-      <LoginPages />
+      <Login />
       <Show.underMd>
         <FootNavMenu showThreshold={200} />
       </Show.underMd>
-    </AuthContextProvider>
+    </>
   );
 }
 

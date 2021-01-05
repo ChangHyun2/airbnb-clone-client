@@ -4,7 +4,7 @@ import Carousel from './carousel/Carousel';
 import styled from '@emotion/styled';
 
 const Img = styled.img`
-  width: 250px;
+  width: 100%;
   height: 250px;
 `;
 
@@ -27,13 +27,12 @@ function App() {
         config={{
           showButton: true,
           slideGap: 20,
-          windowOverSize: 30,
           showBothSlides: true,
         }}
         style={{ width: '50%' }}
       >
         {images.map(({ id, download_url: url, author }, index) => (
-          <Img key={id} src={url} alt={author} />
+          <Img key={id} src={url} alt={author} style={{ width: '60%' }} />
         ))}
       </Carousel>
       <h1>showRightSlide</h1>
@@ -41,12 +40,11 @@ function App() {
         config={{
           showButton: true,
           slideGap: 20,
-          windowOverSize: 30,
           showRightSlide: true,
         }}
       >
         {images.map(({ id, download_url: url, author }, index) => (
-          <Img key={id} src={url} alt={author} />
+          <Img key={id} src={url} alt={author} style={{ width: '80%' }} />
         ))}
       </Carousel>
       <h1>normal</h1>
@@ -54,11 +52,22 @@ function App() {
         config={{
           showButton: true,
           slideGap: 20,
-          windowOverSize: 30,
         }}
       >
         {images.map(({ id, download_url: url, author }, index) => (
           <Img key={id} src={url} alt={author} />
+        ))}
+      </Carousel>
+      <Carousel
+        config={{
+          showButton: true,
+          slideGap: 20,
+          showBothSlides: true,
+        }}
+        style={{ width: '400px' }}
+      >
+        {images.map(({ id, download_url: url, author }, index) => (
+          <Img key={id} src={url} alt={author} style={{ width: '300px' }} />
         ))}
       </Carousel>
     </div>

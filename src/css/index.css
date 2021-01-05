@@ -17,6 +17,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   color: #222;
 }
+
 svg {
   fill: #222;
 }
@@ -33,4 +34,17 @@ nav {
 a {
   text-decoration: none;
   font-size: inherit;
+}
+a:visited {
+  color: inherit;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin-block-start: 0;
+  margin-block-end: 0;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
 }

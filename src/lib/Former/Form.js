@@ -1,5 +1,5 @@
 import React from 'react';
-import { useFormContext } from '@context/FormContext';
+import { useFormContext } from './FormContext';
 
 export const Form = ({ children }) => {
   const { submitForm } = useFormContext();

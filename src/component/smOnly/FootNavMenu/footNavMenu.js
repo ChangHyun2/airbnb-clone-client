@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import styled from '@emotion/styled';
 import { center } from 'S';
 import { useAuthContext } from '@context/AuthContext';
@@ -33,17 +34,15 @@ const Text = styled.span`
 // https://github.com/facebook/react/issues/14066
 function FootNavMenu({ showThreshold }) {
   const show = useShowNavMenu(showThreshold);
-  const isAuth = useAuthContext();
+  const isAuth = useSelector((state) => state.auth.isAuth);
 
   return (
     <FixedBottom show={show}>
       <Wrapper>
-        {navItems.map(({ to, exact, text, isAuth: isAuthRequired, logo }) => {
-          if (isAuthRequired !== undefined && isAuth !== isAuthRequired) {
-            return;
+        {navItems.map(({ to, exact, text, isAuth: shouldAuth, logo }) => {
+          if (shouldAuth !== undefined && shouldAuth !== isAuth) {
+            return null;
           }
-
-          console.log(logo, 'Icon');
 
           const Icon = Icons[logo + 'Icon'];
 

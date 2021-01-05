@@ -32,7 +32,6 @@ const NavigateBtn = ({ direction }) => {
   const [disabled, setDisabled] = useState(false);
 
   useEffect(() => {
-    console.log(state.isFirstSlide);
     switch (direction) {
       case 'prev':
         setDisabled(state.isFirstSlide);
@@ -52,8 +51,8 @@ const NavigateBtn = ({ direction }) => {
     }
 
     const navigateDirection = e.target.dataset.direction;
-
     const oldCurrent = state.current;
+
     let newCurrent;
     let newTrackOffset;
     let isFirstSlide;
@@ -61,6 +60,7 @@ const NavigateBtn = ({ direction }) => {
 
     if (navigateDirection === 'prev') {
       if (oldCurrent === 0) {
+        // add fallback transition
         return;
       } else {
         newCurrent = oldCurrent - 1;
@@ -69,29 +69,36 @@ const NavigateBtn = ({ direction }) => {
 
     if (navigateDirection === 'next') {
       if (oldCurrent === state.slides.length - 1) {
+        // add fallback transition
         return;
       } else {
         newCurrent = oldCurrent + 1;
       }
     }
 
-    isFirstSlide = newCurrent === 0 ? true : false;
+    if (newCurrent === 0) {
+      isFirstSlide = true;
+      isLastSlide = false;
+    }
 
     newTrackOffset = -state.slideRelativePositions[newCurrent];
 
     if (0 < newCurrent && newCurrent < state.slides.length - 1) {
       if (state.config.showBothSlides) {
         newTrackOffset +=
-          (-state.slides[newCurrent].offsetWidth + state.windowSize.width) / 2;
+          (state.windowRef.current.offsetWidth -
+            state.slides[newCurrent].firstElementChild.width) /
+          2;
       }
+      isFirstSlide = false;
+      isLastSlide = false;
     }
 
     if (newCurrent === state.slides.length - 1) {
       isLastSlide = true;
       newTrackOffset +=
-        -state.slides[newCurrent].offsetWidth + state.windowSize.width;
-    } else {
-      isLastSlide = false;
+        -state.slides[newCurrent].firstElementChild.width +
+        state.windowRef.current.offsetWidth;
     }
 
     dispatch({

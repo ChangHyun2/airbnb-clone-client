@@ -1,15 +1,29 @@
 import React from 'react';
+import { Notice, SearchSection, SearchWrapper } from './Header.styled';
+import SearchBar from './header/SearchBar';
+import BaseButton from '@UI/Button/BaseButton';
 import noticeData from '@data/notice';
-import Notice from './header/Notice';
-import Search from './header/Search';
 
 const { href, content } = noticeData.slice(-1)[0];
 
 function Header() {
   return (
     <header>
-      <Notice href={href} content={content} />
-      <Search />
+      <Notice>
+        <a href={href}>{content}</a>
+      </Notice>
+      <SearchWrapper>
+        <SearchSection>
+          <div>
+            <p>
+              이제, 여행은 <br />
+              가까운 곳에서
+            </p>
+            <BaseButton href="#">근처의 숙소 둘러보기</BaseButton>
+          </div>
+        </SearchSection>
+        <SearchBar />
+      </SearchWrapper>
     </header>
   );
 }
