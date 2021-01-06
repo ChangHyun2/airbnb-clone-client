@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { loginUser } from '@store/actions/authActions';
+import { AuthWithThirdParty } from '@store/actions/authActions';
 import { useToggle } from '@hooks';
 import Former from 'Former';
 import {

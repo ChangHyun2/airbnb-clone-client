@@ -1,5 +1,8 @@
 const path = require('path');
-const { DefinePlugin } = require('webpack');
+const {
+  DefinePlugin,
+  ids: { HashedModuleIdsPlugin },
+} = require('webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const htmlWebpackPlugin = require('html-webpack-plugin');
 const isDevMode = process.env.NODE_ENV !== 'production';
@@ -15,8 +18,16 @@ if (dotenv.error) {
 console.log(dotenv.parsed);
 
 const commonConfig = {
-  entry: ['@babel/polyfill', './src/index.js'],
+  entry: {
+    index: path.resolve(__dirname, 'src/index.js'),
+  },
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: '[name].[contenthash].js',
+  },
   plugins: [
+    new BundleAnalyzerPlugin(),
+    new HashedModuleIdsPlugin(),
     new CleanWebpackPlugin({
       cleanOnceBeforeBuildPatterns: [path.resolve(__dirname, 'dist')],
     }),
@@ -26,7 +37,6 @@ const commonConfig = {
     new DefinePlugin({
       'process.env': JSON.stringify(dotenv.parsed),
     }),
-    new BundleAnalyzerPlugin(),
   ],
   resolve: {
     extensions: ['.js', '.jsx', '.css'],

@@ -29,8 +29,6 @@ const Icons = Object.entries({
   };
 }, {});
 
-console.log(Icons);
-
 // Object.keys(Icon).forEach((key) => {
 //   Icons[key].displayName = key.charAt(0).toUpperCase() + key.slice(1) + 'Icon';
 //   console.log(Icons[key].displayName);

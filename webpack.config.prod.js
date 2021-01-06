@@ -6,10 +6,6 @@ const TerserPlugin = require('terser-webpack-plugin');
 
 const prodConfig = {
   mode: 'production',
-  output: {
-    filename: '[name].bundle.js',
-    path: path.resolve(__dirname, 'dist'),
-  },
   module: {
     rules: [
       {
@@ -25,17 +21,24 @@ const prodConfig = {
     ],
   },
   optimization: {
+    runtimeChunk: 'single',
     splitChunks: {
+      chunks: 'all',
+      maxInitialRequests: Infinity,
+      minSize: 0,
       cacheGroups: {
-        vendors: {
-          name: 'node_vendors',
+        vendor: {
           test: /[\\/]node_modules[\\/]/,
-          chunks: 'all',
-        },
-        common: {
-          name: 'components',
-          test: /[\\/]src[\\/]components[\\/]/,
-          chunks: 'all',
+          name(module) {
+            // get the name. E.g. node_modules/packageName/not/this/part.js
+            // or node_modules/packageName
+            const packageName = module.context.match(
+              /[\\/]node_modules[\\/](.*?)([\\/]|$)/
+            )[1];
+
+            // npm package names are URL-safe, but some servers don't like @ symbols
+            return `npm.${packageName.replace('@', '')}`;
+          },
         },
       },
     },
@@ -46,11 +49,6 @@ const prodConfig = {
         extractComments: true,
       }), // https://github.com/webpack-contrib/terser-webpack-plugin
     ],
-  },
-  devServer: {
-    port: 4000,
-    contentBase: path.resolve(__dirname, 'dist'),
-    stats: 'errors-only',
   },
 };
 

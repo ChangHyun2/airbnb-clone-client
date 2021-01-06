@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { AuthWithThirdParty } from '@store/actions/authActions';
 import { ThemeProvider } from '@emotion/react';
+
 import { pallete } from '@variable';
 import { MediaQueryContextProvider } from '@context/MediaQueryContext';
 import Layout from './page/Layout';
@@ -18,8 +18,7 @@ function App() {
       const decoded = jwt_decode(jwtToken);
       const currentTime = Date.now() / 1000;
 
-      console.log({ decoded });
-      console.log(jwtToken);
+      console.log('local auth', { jwtToken: decoded });
       if (currentTime < decoded.exp) {
         store.dispatch(setCurrentUser(decoded));
       }
@@ -35,12 +34,8 @@ function App() {
       })
         .then((res) => res.json())
         .then((user) => {
-          console.log('hi');
-          console.log(user);
-          console.log('user', user);
-          console.log(user);
-
           if (user) {
+            console.log('success initial auth', user);
             store.dispatch(setCurrentUser(user));
           }
         })

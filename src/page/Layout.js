@@ -10,28 +10,12 @@ import Profile from './profile/profile';
 import Show from '@component/Show';
 import FootNavMenu from '@component/smOnly/FootNavMenu/footNavMenu';
 
-const GoogleSuccess = () => {
-  React.useEffect(() => {
-    const params = window.location.search;
-    if (window.opener) {
-      // send them to the opening window
-      window.opener.postMessage(params);
-      // close the popup
-      window.close();
-    }
-  });
-  return <h2>waitsdfsdfsdfsdfsdfsdfsdfsfsdfsdfsing...</h2>;
-};
-
 function Layout() {
   const isAuth = useSelector((state) => state.auth.isAuth);
 
   return (
     <>
       <Switch>
-        <Route path="/google/success">
-          <GoogleSuccess />
-        </Route>
         <Route path="/" exact>
           <Home />
         </Route>

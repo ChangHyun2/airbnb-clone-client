@@ -5,6 +5,8 @@ import store from '@store/index';
 import App from './App';
 import './css/index.css';
 
+require('babel-polyfill');
+
 ReactDOM.render(
   <Provider store={store}>
     <App />

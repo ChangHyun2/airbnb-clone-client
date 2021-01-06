@@ -29,7 +29,6 @@ const NavLink = styled(navlink)`
 // https://stackoverflow.com/questions/57117445/how-to-create-a-css-class-for-use-in-activeclassname
 const NavItem = ({ children, to, exact, otherProps }) => {
   const theme = useTheme();
-  console.log(theme);
 
   return (
     <Li>

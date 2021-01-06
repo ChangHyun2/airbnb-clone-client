@@ -23,15 +23,20 @@ function MobileProfile() {
             <SecondaryGhostButton href={'#'}>프로필 보기</SecondaryGhostButton>
             <SecondaryGhostButton
               onClick={() => {
-                fetch('http://localhost:3000/api/auth/logout')
+                fetch('http://localhost:3000/api/auth/logout', {
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                  },
+                })
                   .then((res) => res.json())
                   .then((data) => {
-                    const user = { data };
+                    console.log(data);
                     dispatch(logoutUser());
                     history.replace('/');
                   })
                   .catch((e) => {
-                    console.log(e);
+                    console.error(e);
                   });
               }}
             >

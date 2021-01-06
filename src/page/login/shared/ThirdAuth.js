@@ -16,17 +16,9 @@ const FacebookIcon = styled(facebookIcon)`
   margin-right: 10px;
 `;
 
-const ThirdAuth = () => {
-  const history = useHistory();
-
-  return (
-    <>
-      <FacebookFluidButton Icon={FacebookIcon}>
-        페이스북 계정으로 로그인
-      </FacebookFluidButton>
-      <GoogleFluidButton
-        Icon={GoogleIcon}
-        onClick={() => {
+/*
+popup handler
+() => {
           const url = new URL('http://localhost:3000/api/auth/google');
 
           // window.open(url, '_self');
@@ -72,6 +64,21 @@ const ThirdAuth = () => {
           };
 
           openPopup('http://localhost:3000/api/auth/google', 'google');
+        }
+*/
+
+const ThirdAuth = () => {
+  const history = useHistory();
+
+  return (
+    <>
+      <FacebookFluidButton Icon={FacebookIcon}>
+        페이스북 계정으로 로그인
+      </FacebookFluidButton>
+      <GoogleFluidButton
+        Icon={GoogleIcon}
+        onClick={() => {
+          location.href = 'http://localhost:3000/api/auth/google';
         }}
       >
         구글 계정으로 로그인
