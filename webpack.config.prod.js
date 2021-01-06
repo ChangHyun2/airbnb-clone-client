@@ -6,6 +6,13 @@ const TerserPlugin = require('terser-webpack-plugin');
 
 const prodConfig = {
   mode: 'production',
+  entry: {
+    index: path.resolve(__dirname, 'src/index.js'),
+  },
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: '[name].[contenthash].js',
+  },
   module: {
     rules: [
       {
